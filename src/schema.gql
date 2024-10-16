@@ -1,0 +1,48 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type Task {
+  _id: String!
+  title: String!
+  description: String
+  status: TaskStatus!
+  priority: TaskPriority!
+  createdBy: String
+  assignedTo: String
+}
+
+enum TaskStatus {
+  PENDING
+  IN_PROGRESS
+  DONE
+}
+
+enum TaskPriority {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+type Query {
+  getHello: String!
+  tasks: [Task!]!
+  task(id: Int!): Task!
+}
+
+type Mutation {
+  createTask(createTaskInput: CreateTaskInput!): Task!
+  updateTask(updateTaskInput: UpdateTaskInput!): Task!
+  removeTask(id: Int!): Task!
+}
+
+input CreateTaskInput {
+  title: String!
+  authorId: String!
+}
+
+input UpdateTaskInput {
+  title: String
+  authorId: String
+  _id: String!
+}
