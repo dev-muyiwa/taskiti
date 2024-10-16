@@ -47,6 +47,12 @@ export class Task extends Document {
   @Field(() => String, { nullable: true })
   @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'User' })
   assignedTo?: Types.ObjectId;
+
+  @Field(() => Date)
+  createdAt: Date;
+
+  @Field(() => Date)
+  updatedAt: Date;
 }
 
 export const TaskSchema = SchemaFactory.createForClass<Task>(Task);

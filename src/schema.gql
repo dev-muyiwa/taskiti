@@ -2,47 +2,54 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-type Task {
-  _id: String!
-  title: String!
+input CreateTaskInput {
   description: String
-  status: TaskStatus!
-  priority: TaskPriority!
-  createdBy: String
-  assignedTo: String
+  title: String!
 }
 
-enum TaskStatus {
-  PENDING
-  IN_PROGRESS
-  DONE
-}
-
-enum TaskPriority {
-  LOW
-  MEDIUM
-  HIGH
-}
-
-type Query {
-  getHello: String!
-  tasks: [Task!]!
-  task(id: Int!): Task!
-}
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
 
 type Mutation {
   createTask(createTaskInput: CreateTaskInput!): Task!
+  deleteTask(id: String!): Boolean!
   updateTask(updateTaskInput: UpdateTaskInput!): Task!
-  removeTask(id: Int!): Task!
 }
 
-input CreateTaskInput {
+type Query {
+  findTasks: [Task!]!
+  getHello: String!
+  getTask(id: String!): Task!
+}
+
+type Task {
+  _id: String!
+  assignedTo: String
+  createdAt: DateTime!
+  createdBy: String
+  description: String
+  priority: TaskPriority!
+  status: TaskStatus!
   title: String!
-  authorId: String!
+  updatedAt: DateTime!
+}
+
+enum TaskPriority {
+  HIGH
+  LOW
+  MEDIUM
+}
+
+enum TaskStatus {
+  DONE
+  IN_PROGRESS
+  PENDING
 }
 
 input UpdateTaskInput {
+  description: String
+  id: String!
   title: String
-  authorId: String
-  _id: String!
 }

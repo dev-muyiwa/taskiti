@@ -3,11 +3,12 @@ import { TasksService } from './tasks.service';
 import { TasksResolver } from './tasks.resolver';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Task, TaskSchema } from './entities/task.entity';
+import { TaskRepository } from './task.repository';
 
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: Task.name, schema: TaskSchema }]),
   ],
-  providers: [TasksResolver, TasksService],
+  providers: [TasksResolver, TasksService, TaskRepository],
 })
 export class TasksModule {}
