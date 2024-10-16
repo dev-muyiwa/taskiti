@@ -26,7 +26,9 @@ export class TasksResolver {
   }
 
   @Mutation(() => Task, { name: 'updateTask' })
-  async updateTask(@Args('updateTaskInput') updateTaskInput: UpdateTaskInput): Promise<Task> {
+  async updateTask(
+    @Args('updateTaskInput') updateTaskInput: UpdateTaskInput,
+  ): Promise<Task> {
     return this.tasksService.update(updateTaskInput.id, updateTaskInput);
   }
 

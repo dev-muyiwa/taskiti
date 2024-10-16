@@ -20,7 +20,7 @@ registerEnumType(TaskPriority, { name: 'TaskPriority' });
 
 @ObjectType()
 @Schema({ timestamps: true })
-export class Task extends Document {
+export class Task {
   @Field(() => String)
   _id: Types.ObjectId;
 
@@ -54,5 +54,7 @@ export class Task extends Document {
   @Field(() => Date)
   updatedAt: Date;
 }
+
+export type TaskDocument = Task & Document;
 
 export const TaskSchema = SchemaFactory.createForClass<Task>(Task);

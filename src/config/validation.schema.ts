@@ -43,6 +43,16 @@ class MailConfig {
   secure: string;
 }
 
+class JWTSecret {
+  @IsString()
+  @IsNotEmpty({ message: 'JWT access secret is required' })
+  access_secret: string;
+
+  @IsString()
+  @IsNotEmpty({ message: 'JWT refresh secret is required' })
+  refresh_secret: string;
+}
+
 export class EnvConfig {
   @IsString()
   @IsIn(['local', 'development', 'production', 'test'])
@@ -51,9 +61,6 @@ export class EnvConfig {
   @IsString()
   app_name: string;
 
-  @IsString()
-  jwt_secret: string;
-
   @Type(() => Number)
   @IsNumber()
   port: number;
@@ -61,6 +68,10 @@ export class EnvConfig {
   @IsString()
   @IsNotEmpty({ message: 'Mongo URL is required' })
   mongo_uri: string;
+
+  @ValidateNested()
+  @Type(() => JWTSecret)
+  jwt: JWTSecret;
 
   // @ValidateNested()
   // @Type(() => RedisConfig)

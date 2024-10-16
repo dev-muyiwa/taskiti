@@ -2,9 +2,24 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type Auth {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+input CreateAuthInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
 input CreateTaskInput {
   description: String
   title: String!
+}
+
+input CreateUserInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
 }
 
 """
@@ -14,14 +29,20 @@ scalar DateTime
 
 type Mutation {
   createTask(createTaskInput: CreateTaskInput!): Task!
+  createUser(createUserInput: CreateUserInput!): User!
   deleteTask(id: String!): Boolean!
+  login(updateAuthInput: UpdateAuthInput!): Auth!
+  register(createAuthInput: CreateAuthInput!): Auth!
+  removeUser(id: Int!): User!
   updateTask(updateTaskInput: UpdateTaskInput!): Task!
+  updateUser(updateUserInput: UpdateUserInput!): User!
 }
 
 type Query {
   findTasks: [Task!]!
   getHello: String!
   getTask(id: String!): Task!
+  user(id: Int!): User!
 }
 
 type Task {
@@ -48,8 +69,31 @@ enum TaskStatus {
   PENDING
 }
 
+input UpdateAuthInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
+}
+
 input UpdateTaskInput {
   description: String
   id: String!
   title: String
+}
+
+input UpdateUserInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
+}
+
+type User {
+  _id: String!
+  bio: String
+  createdAt: DateTime!
+  email: String!
+  firstName: String!
+  lastName: String!
+  password: String!
+  updatedAt: DateTime!
 }

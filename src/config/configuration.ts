@@ -6,7 +6,10 @@ import { validateSync, ValidationError } from 'class-validator';
 export default (): EnvConfig => {
   const config = {
     app_name: process.env.APP_NAME,
-    jwt_secret: process.env.JWT_SECRET,
+    jwt: {
+      access_secret: process.env.JWT_ACCESS_SECRET,
+      refresh_secret: process.env.JWT_REFRESH_SECRET,
+    },
     node_env: process.env.NODE_ENV,
     port: process.env.PORT,
     mongo_uri: process.env.MONGO_URI,

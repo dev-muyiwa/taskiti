@@ -10,6 +10,11 @@ import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { TasksModule } from './tasks/tasks.module';
 import { join } from 'path';
 import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default';
+import { AuthModule } from './auth/auth.module';
+import { UserModule } from './user/user.module';
+import { JwtAuthGuard } from './auth/guards/jwt.guard';
+import { APP_FILTER, APP_GUARD } from '@nestjs/core';
+import { GraphQLExceptionFilter } from './config/utils/exception.filter';
 
 @Module({
   imports: [
@@ -18,17 +23,37 @@ import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin
       load: [configuration],
       envFilePath: ['.env', '.env.development'],
     }),
-    DatabaseModule,
     GraphQLModule.forRoot<ApolloDriverConfig>({
-      driver: ApolloDriver,
+      allowBatchedHttpRequests: true,
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
-      sortSchema: true,
+      context: ({ req, res }) => ({ req, res }),
+      driver: ApolloDriver,
+      formatError: (error) => {
+        return {
+          message: error.message,
+          path: error.path,
+          extensions: {
+            code: error.extensions?.code,
+            status: error.extensions?.status,
+            errors: error.extensions?.errors,
+          },
+        };
+      },
       playground: false,
       plugins: [ApolloServerPluginLandingPageLocalDefault()],
+      sortSchema: true,
     }),
+    DatabaseModule,
     TasksModule,
+    AuthModule,
+    UserModule,
   ],
-  providers: [AppService, AppResolver],
+  providers: [
+    AppService,
+    AppResolver,
+    { provide: APP_GUARD, useClass: JwtAuthGuard },
+    { provide: APP_FILTER, useClass: GraphQLExceptionFilter },
+  ],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer): any {
