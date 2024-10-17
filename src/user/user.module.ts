@@ -3,7 +3,7 @@ import { UserService } from './user.service';
 import { UserResolver } from './user.resolver';
 import { MongooseModule } from '@nestjs/mongoose';
 import { UserSchema } from './entities/user.entity';
-import bcrypt from 'bcryptjs';
+import * as bcrypt from 'bcryptjs';
 import { UserRepository } from './user.repository';
 
 @Module({
@@ -11,11 +11,11 @@ import { UserRepository } from './user.repository';
     MongooseModule.forFeatureAsync([
       {
         name: 'User',
-        useFactory: () => {
+        useFactory: async () => {
           const schema = UserSchema;
           schema.pre('save', async function (next) {
-            if (this.isNew) {
-              const salt = bcrypt.genSaltSync(10);
+            if (this.isModified('password')) {
+              const salt = await bcrypt.genSalt(10);
               this.password = await bcrypt.hash(this.password, salt);
             }
             next();

@@ -1,10 +1,13 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, ID, ObjectType } from '@nestjs/graphql';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
 
 @ObjectType()
-@Schema({ timestamps: true })
+@Schema({ timestamps: true, id: true })
 export class User {
+  @Field(() => ID)
+  id: string;
+
   @Field(() => String)
   _id: Types.ObjectId;
 

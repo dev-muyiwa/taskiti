@@ -6,7 +6,6 @@ import {
 } from '@nestjs/common';
 import { GqlArgumentsHost, GqlExceptionFilter } from '@nestjs/graphql';
 import { GraphQLError } from 'graphql';
-import { Response } from 'express';
 
 @Catch()
 export class GraphQLExceptionFilter implements GqlExceptionFilter {
@@ -30,9 +29,13 @@ export class GraphQLExceptionFilter implements GqlExceptionFilter {
         errors = this.formatValidationErrors(exceptionResponse.message);
       } else {
         message =
-          exceptionResponse.message || exception.message || 'Something went wrong. Try again later';
+          exceptionResponse.message ||
+          exception.message ||
+          'Something went wrong. Try again later';
       }
     }
+
+    console.log('exception', exception);
 
     throw new GraphQLError(message, {
       extensions: {

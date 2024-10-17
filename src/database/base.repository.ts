@@ -1,5 +1,5 @@
 import { Document, FilterQuery, Model, UpdateQuery } from 'mongoose';
-import { PaginationDto } from 'src/config/dto/pagination.dto';
+import { PaginationDto } from 'src/database/pagination.dto';
 
 export abstract class BaseRepository<T extends Document> {
   constructor(protected readonly model: Model<T>) {}
@@ -35,7 +35,9 @@ export abstract class BaseRepository<T extends Document> {
       },
       {
         $addFields: {
-          totalItems: { $arrayElemAt: ['$metadata.totalItems', 0] },
+          totalItems: {
+            $ifNull: [{ $arrayElemAt: ['$metadata.totalItems', 0] }, 0],
+          },
         },
       },
       {
@@ -55,12 +57,12 @@ export abstract class BaseRepository<T extends Document> {
       totalPages: 0,
     };
 
-    return {
-      data: result.data,
-      currentPage: result.currentPage,
-      totalPages: result.totalPages,
-      totalItems: result.totalItems,
-    };
+    return new PaginatedResult<T>(
+      result.data,
+      result.currentPage,
+      result.totalPages,
+      result.totalItems,
+    );
   }
 
   async update(

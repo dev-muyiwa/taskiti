@@ -1,6 +1,7 @@
-import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
+import { Field, ID, ObjectType, registerEnumType } from '@nestjs/graphql';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Schema as MongooseSchema, Types } from 'mongoose';
+import { User } from '../../user/entities/user.entity';
 
 export enum TaskStatus {
   PENDING = 'pending',
@@ -19,8 +20,11 @@ registerEnumType(TaskStatus, { name: 'TaskStatus' });
 registerEnumType(TaskPriority, { name: 'TaskPriority' });
 
 @ObjectType()
-@Schema({ timestamps: true })
+@Schema({ timestamps: true, id: true })
 export class Task {
+  @Field(() => ID)
+  id: string;
+
   @Field(() => String)
   _id: Types.ObjectId;
 
@@ -29,7 +33,7 @@ export class Task {
   title: string;
 
   @Field({ nullable: true })
-  @Prop()
+  @Prop({ type: String, default: null })
   description?: string;
 
   @Field(() => TaskStatus)
@@ -41,11 +45,11 @@ export class Task {
   priority: TaskPriority;
 
   @Field(() => String, { nullable: true })
-  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'User' })
+  @Prop({ type: MongooseSchema.Types.ObjectId, ref: User.name, required: true })
   createdBy: Types.ObjectId;
 
   @Field(() => String, { nullable: true })
-  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'User' })
+  @Prop({ type: MongooseSchema.Types.ObjectId, ref: User.name, default: null })
   assignedTo?: Types.ObjectId;
 
   @Field(() => Date)

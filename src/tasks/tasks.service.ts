@@ -1,22 +1,38 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CreateTaskInput } from './dto/create-task.input';
 import { UpdateTaskInput } from './dto/update-task.input';
 import { TaskRepository } from './task.repository';
 import { Task } from './entities/task.entity';
+import { Types } from 'mongoose';
+import { PaginationDto } from '../database/pagination.dto';
 
 @Injectable()
 export class TasksService {
-  constructor(@Inject() private readonly taskRepository: TaskRepository) {}
+  constructor(private readonly taskRepository: TaskRepository) {}
 
-  async create(createTaskInput: CreateTaskInput): Promise<Task> {
-    return await this.taskRepository.create(createTaskInput);
+  async create(
+    creatorId: string,
+    createTaskInput: CreateTaskInput,
+  ): Promise<Task> {
+    return await this.taskRepository.create({
+      ...createTaskInput,
+      createdBy: new Types.ObjectId(creatorId),
+      assignedTo: createTaskInput.assignedTo
+        ? new Types.ObjectId(createTaskInput.assignedTo)
+        : null,
+    });
   }
 
-  async findAll() {
-    // return await this.taskRepository.find();
+  async findAll(creatorId: string, paginationDto: PaginationDto) {
+    return await this.taskRepository.find(
+      {
+        createdBy: new Types.ObjectId(creatorId),
+      },
+      paginationDto,
+    );
   }
 
-  async findOne(id: string) {
+  async findById(id: string) {
     return await this.taskRepository.findById(id);
   }
 
@@ -27,6 +43,13 @@ export class TasksService {
     }
 
     return await this.taskRepository.update({ _id: task._id }, updateTaskInput);
+  }
+
+  async assignTaskToUser(taskId: string, userId: string) {
+    return await this.taskRepository.update(
+      { _id: taskId },
+      { assignedTo: new Types.ObjectId(userId) },
+    );
   }
 
   async remove(id: string) {

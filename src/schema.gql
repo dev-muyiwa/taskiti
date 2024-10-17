@@ -2,24 +2,24 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-type Auth {
-  """Example field (placeholder)"""
-  exampleField: Int!
+input AssignTaskInput {
+  taskId: String!
+  userId: String!
 }
 
-input CreateAuthInput {
-  """Example field (placeholder)"""
-  exampleField: Int!
+type Auth {
+  accessToken: String!
+  email: String!
+  firstName: String!
+  id: String!
+  lastName: String!
 }
 
 input CreateTaskInput {
+  assignedTo: String
   description: String
+  priority: String
   title: String!
-}
-
-input CreateUserInput {
-  """Example field (placeholder)"""
-  exampleField: Int!
 }
 
 """
@@ -27,22 +27,43 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
+input LoginUserInput {
+  email: String!
+  password: String!
+}
+
 type Mutation {
+  assignTaskToUser(assignTaskInput: AssignTaskInput!): Task!
   createTask(createTaskInput: CreateTaskInput!): Task!
-  createUser(createUserInput: CreateUserInput!): User!
   deleteTask(id: String!): Boolean!
-  login(updateAuthInput: UpdateAuthInput!): Auth!
-  register(createAuthInput: CreateAuthInput!): Auth!
-  removeUser(id: Int!): User!
+  login(loginUserInput: LoginUserInput!): Auth!
+  register(registerUserInput: RegisterUserInput!): Auth!
   updateTask(updateTaskInput: UpdateTaskInput!): Task!
-  updateUser(updateUserInput: UpdateUserInput!): User!
+}
+
+type PaginatedTaskResult {
+  currentPage: Float!
+  data: [Task!]!
+  totalItems: Float!
+  totalPages: Float!
+}
+
+input PaginationDto {
+  limit: Float = 15
+  page: Float = 1
 }
 
 type Query {
-  findTasks: [Task!]!
+  findTasks(filterInput: PaginationDto!): PaginatedTaskResult!
   getHello: String!
   getTask(id: String!): Task!
-  user(id: Int!): User!
+}
+
+input RegisterUserInput {
+  email: String!
+  firstName: String!
+  lastName: String!
+  password: String!
 }
 
 type Task {
@@ -51,6 +72,7 @@ type Task {
   createdAt: DateTime!
   createdBy: String
   description: String
+  id: ID!
   priority: TaskPriority!
   status: TaskStatus!
   title: String!
@@ -69,31 +91,10 @@ enum TaskStatus {
   PENDING
 }
 
-input UpdateAuthInput {
-  """Example field (placeholder)"""
-  exampleField: Int
-  id: Int!
-}
-
 input UpdateTaskInput {
+  assignedTo: String
   description: String
   id: String!
+  priority: String
   title: String
-}
-
-input UpdateUserInput {
-  """Example field (placeholder)"""
-  exampleField: Int
-  id: Int!
-}
-
-type User {
-  _id: String!
-  bio: String
-  createdAt: DateTime!
-  email: String!
-  firstName: String!
-  lastName: String!
-  password: String!
-  updatedAt: DateTime!
 }
