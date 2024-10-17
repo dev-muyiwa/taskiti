@@ -1,5 +1,11 @@
 import { Field, InputType } from '@nestjs/graphql';
-import { IsNotEmpty, IsString } from 'class-validator';
+import {
+  IsEnum,
+  IsMongoId,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 import { TaskPriority } from '../entities/task.entity';
 
 @InputType()
@@ -10,13 +16,18 @@ export class CreateTaskInput {
   readonly title: string;
 
   @Field({ nullable: true })
-  // @IsString({ message: 'Description must be a string' })
+  @IsOptional()
+  @IsString({ message: 'Description must be a string' })
   readonly description?: string;
 
-  @Field({ nullable: true })
+  @Field(() => TaskPriority, { nullable: true })
+  @IsEnum(TaskPriority, {
+    message: `Priority must be either ${Object.values(TaskPriority).join(' or ')}`,
+  })
   readonly priority?: TaskPriority;
 
   @Field({ nullable: true })
-  // @IsMongoId({ message: 'Assigned to must be a valid MongoDB ID' })
+  @IsOptional()
+  @IsMongoId({ message: 'Assigned to must be a valid MongoDB ID' })
   readonly assignedTo?: string;
 }

@@ -18,7 +18,7 @@ type Auth {
 input CreateTaskInput {
   assignedTo: String
   description: String
-  priority: String
+  priority: TaskPriority
   title: String!
 }
 
@@ -26,6 +26,11 @@ input CreateTaskInput {
 A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
 """
 scalar DateTime
+
+input FilterTaskDto {
+  priority: TaskPriority
+  status: TaskStatus
+}
 
 input LoginUserInput {
   email: String!
@@ -39,6 +44,7 @@ type Mutation {
   login(loginUserInput: LoginUserInput!): Auth!
   register(registerUserInput: RegisterUserInput!): Auth!
   updateTask(updateTaskInput: UpdateTaskInput!): Task!
+  updateTaskStatus(updateTaskStatusInput: UpdateTaskStatusInput!): Task!
 }
 
 type PaginatedTaskResult {
@@ -54,7 +60,7 @@ input PaginationDto {
 }
 
 type Query {
-  findTasks(filterInput: PaginationDto!): PaginatedTaskResult!
+  findTasks(filterInput: FilterTaskDto!, paginationInput: PaginationDto!): PaginatedTaskResult!
   getHello: String!
   getTask(id: String!): Task!
 }
@@ -95,6 +101,11 @@ input UpdateTaskInput {
   assignedTo: String
   description: String
   id: String!
-  priority: String
+  priority: TaskPriority
   title: String
+}
+
+input UpdateTaskStatusInput {
+  id: String!
+  status: TaskStatus!
 }

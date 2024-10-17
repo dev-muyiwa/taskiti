@@ -5,6 +5,7 @@ import { TaskRepository } from './task.repository';
 import { Task } from './entities/task.entity';
 import { Types } from 'mongoose';
 import { PaginationDto } from '../database/pagination.dto';
+import { FilterTaskDto } from './dto/filter-task.dto';
 
 @Injectable()
 export class TasksService {
@@ -23,10 +24,15 @@ export class TasksService {
     });
   }
 
-  async findAll(creatorId: string, paginationDto: PaginationDto) {
+  async findAll(
+    creatorId: string,
+    paginationDto: PaginationDto,
+    filterDto: FilterTaskDto,
+  ) {
     return await this.taskRepository.find(
       {
         createdBy: new Types.ObjectId(creatorId),
+        ...filterDto,
       },
       paginationDto,
     );
@@ -37,12 +43,11 @@ export class TasksService {
   }
 
   async update(id: string, updateTaskInput: UpdateTaskInput) {
-    const task = await this.taskRepository.findById(id);
-    if (!task) {
-      return null;
-    }
+    return await this.taskRepository.update({ _id: id }, updateTaskInput);
+  }
 
-    return await this.taskRepository.update({ _id: task._id }, updateTaskInput);
+  async updateStatus(id: string, status: string) {
+    return await this.taskRepository.update({ _id: id }, { status: status });
   }
 
   async assignTaskToUser(taskId: string, userId: string) {
