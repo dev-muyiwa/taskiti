@@ -13,9 +13,9 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async create(input: RegisterUserInput) {
-    const existingUser = await this.userService.findOneByEmail(input.email);
-    if (existingUser) {
+  async create(input: RegisterUserInput): Promise<Auth> {
+    const exists = await this.userService.exists(input.email);
+    if (exists) {
       throw new BadRequestException(
         'An account with this email already exists',
       );
@@ -37,7 +37,7 @@ export class AuthService {
     } as Auth;
   }
 
-  async login(input: LoginUserInput) {
+  async login(input: LoginUserInput): Promise<Auth> {
     const existingUser = await this.userService.findOneByEmail(input.email);
     if (!existingUser) {
       throw new BadRequestException('Invalid login credentials');
